@@ -1,0 +1,47 @@
+---
+import { render, getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Chip from '../../components/Chip.astro';
+import { embedSrc, formatDate } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const films = await getCollection('films');
+  return films.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const path = `/watch/${entry.id}`;
+---
+<Base title={entry.data.title} description={entry.data.description} path={path}>
+  <article class="film-layout">
+    <div>
+      {entry.data.embed ? (
+        <iframe
+          class="player"
+          src={embedSrc(entry.data.embed)}
+          title={entry.data.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        />
+      ) : (
+        <div class="plate">
+          <p>Two possible futures. One mathematical destination.</p>
+        </div>
+      )}
+    </div>
+    <div>
+      <p class="kicker">Synthetic presenters · transcript</p>
+      <h1>{entry.data.title}</h1>
+      <div class="chips" style="margin: 0.8rem 0 1rem">
+        <Chip vector={entry.data.vector} />
+        <span class="meta">{formatDate(entry.data.date)}{entry.data.platform ? ` · ${entry.data.platform}` : ''}</span>
+      </div>
+      <p class="deck">{entry.data.description}</p>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</Base>

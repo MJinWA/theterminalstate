@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Chip from '../../components/Chip.astro';
+import { byDate, formatDate, topicLabel } from '../../lib/site';
+
+const signals = byDate(await getCollection('signals'));
+const description = 'Linked reporting and primary sources, each with a note on which reading of the terminal state it serves.';
+const filters = [
+  ['all', 'All'],
+  ['acheron', 'Acheron'],
+  ['lyra', 'Lyra'],
+  ['both', 'Both'],
+] as const;
+---
+<Base title="Signals" description={description} path="/signals">
+  <header class="page-head">
+    <div>
+      <p class="kicker">The wire</p>
+      <h1>Signals</h1>
+    </div>
+    <p class="deck">A link, an outlet, and an original note. The article stays where it was published.</p>
+  </header>
+  <div class="filters" role="toolbar" aria-label="Filter by vector">
+    {filters.map(([id, label], index) => (
+      <button type="button" data-filter={id} aria-pressed={index === 0 ? 'true' : 'false'}>{label}</button>
+    ))}
+  </div>
+  <div class="wire" id="signal-wire">
+    {signals.map((signal) => (
+      <a class="signal" href={`/signals/${signal.id}`} data-vector={signal.data.vector}>
+        <p class="meta">{formatDate(signal.data.date)}<br />{topicLabel[signal.data.topic]}</p>
+        <div>
+          <h3>{signal.data.title}</h3>
+          <p>{signal.data.outlet}</p>
+        </div>
+        <Chip vector={signal.data.vector} />
+      </a>
+    ))}
+  </div>
+</Base>
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const rows = document.querySelectorAll<HTMLElement>('#signal-wire [data-vector]');
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const value = button.dataset.filter ?? 'all';
+      buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      rows.forEach((row) => {
+        const show = value === 'all' || row.dataset.vector === value;
+        row.toggleAttribute('hidden', !show);
+      });
+    });
+  });
+</script>

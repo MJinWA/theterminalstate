@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Essay from '../../components/Essay.astro';
+import { paperHref } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const papers = await getCollection('papers');
+  return papers.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const canonical = paperHref(entry.id);
+if (canonical !== `/papers/${entry.id}`) {
+  return Astro.redirect(canonical);
+}
+---
+<Base title={entry.data.title} description={entry.data.description} path={canonical}>
+  <Essay entry={entry} />
+</Base>

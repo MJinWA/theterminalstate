@@ -1,0 +1,11 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Essay from '../components/Essay.astro';
+
+const entry = await getEntry('papers', 'lyra');
+if (!entry) throw new Error('Missing the Lyra essay.');
+---
+<Base title={entry.data.title} description={entry.data.description} path="/lyra">
+  <Essay entry={entry} />
+</Base>

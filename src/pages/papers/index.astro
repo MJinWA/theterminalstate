@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Chip from '../../components/Chip.astro';
+import { byDate, paperHref } from '../../lib/site';
+
+const papers = byDate(await getCollection('papers'));
+const description = 'Brief white papers on what the terminal state is, and on the risk and benefit of reading it two ways.';
+---
+<Base title="Papers" description={description} path="/papers">
+  <header class="page-head">
+    <div>
+      <p class="kicker">White papers</p>
+      <h1>Brief papers</h1>
+    </div>
+    <p class="deck">Each paper is a Markdown file. A new one joins this list on the next publish.</p>
+  </header>
+  <div class="cards">
+    {papers.map((paper) => (
+      <a class="card" href={paperHref(paper.id)}>
+        <div class="chips">
+          <Chip vector={paper.data.vector} />
+          <span class="meta">{paper.data.minutes} min</span>
+        </div>
+        <h3>{paper.data.title}</h3>
+        <p>{paper.data.description}</p>
+      </a>
+    ))}
+  </div>
+</Base>

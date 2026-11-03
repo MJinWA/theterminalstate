@@ -1,0 +1,30 @@
+---
+import { render, getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Chip from '../../components/Chip.astro';
+import { formatDate, topicLabel } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const signals = await getCollection('signals');
+  return signals.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const path = `/signals/${entry.id}`;
+---
+<Base title={entry.data.title} description={entry.data.description} path={path}>
+  <article class="essay">
+    <p class="kicker">{entry.data.outlet} · {topicLabel[entry.data.topic]}</p>
+    <h1>{entry.data.title}</h1>
+    <p class="deck">{entry.data.description}</p>
+    <p class="meta">
+      <Chip vector={entry.data.vector} />
+      <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+    </p>
+    <div class="prose">
+      <Content />
+    </div>
+    <p><a class="source" href={entry.data.url}>Read it at {entry.data.outlet}</a></p>
+  </article>
+</Base>

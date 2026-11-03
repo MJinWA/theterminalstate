@@ -1,0 +1,14 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Essay from '../components/Essay.astro';
+import Converge from '../components/Converge.astro';
+
+const entry = await getEntry('papers', 'what-it-is');
+if (!entry) throw new Error('Missing the terminal-state essay.');
+---
+<Base title={entry.data.title} description={entry.data.description} path="/terminal-state">
+  <Essay entry={entry}>
+    <Converge />
+  </Essay>
+</Base>

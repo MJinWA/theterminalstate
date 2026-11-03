@@ -1,0 +1,56 @@
+---
+import '../styles/global.css';
+import '@fontsource/newsreader/latin-400.css';
+import '@fontsource/newsreader/latin-400-italic.css';
+import '@fontsource/newsreader/latin-600.css';
+import '@fontsource/outfit/latin-400.css';
+import '@fontsource/outfit/latin-500.css';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+}
+const { title, description, path } = Astro.props;
+const fullTitle = path === '/' ? 'The Terminal State' : `${title} · The Terminal State`;
+const canonical = new URL(path, Astro.site);
+const image = new URL('/og.png', Astro.site);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'The Terminal State',
+  url: Astro.site?.toString(),
+  description: 'A reading room for the utopian and dystopian accounts of the terminal state.',
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="The Terminal State" href="/rss.xml" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="generator" content={Astro.generator} />
+    {path === '/' && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <Header />
+    <main id="content" class="wrap">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

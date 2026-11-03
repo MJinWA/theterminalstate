@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Chip from '../components/Chip.astro';
+import Converge from '../components/Converge.astro';
+import { byDate, formatDate, paperHref } from '../lib/site';
+
+const papers = byDate(await getCollection('papers'));
+const films = byDate(await getCollection('films'));
+const signals = byDate(await getCollection('signals')).slice(0, 4);
+const description = 'A reading room for the utopian and dystopian accounts of the terminal state. Essays, films, and the news that belongs to both.';
+---
+<Base title="The Terminal State" description={description} path="/">
+  <section class="hero">
+    <p class="kicker"><span class="acheron">Acheron</span> · <span class="lyra">Lyra</span></p>
+    <h1>Two possible futures. One mathematical destination.</h1>
+    <p class="deck">The terminal state is where a volatile system settles. This site reads that destination twice: as a lock on the controls, and as a shield that carries the weight.</p>
+    <div class="split">
+      <a class="door door-acheron" href="/acheron">
+        <span class="kicker">Dystopian reading</span>
+        <h2>Acheron</h2>
+        <p>Systemic triage. Keep the core alive by locking the controls from the inside.</p>
+        <span class="go">Read the risk</span>
+      </a>
+      <a class="door door-lyra" href="/lyra">
+        <span class="kicker">Utopian reading</span>
+        <h2>Lyra</h2>
+        <p>Synthetic elevation. Rewrite scarcity so people can set the weight down.</p>
+        <span class="go">Read the benefit</span>
+      </a>
+    </div>
+    <Converge />
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Watch</h2>
+      <a href="/watch">All films</a>
+    </div>
+    <div class="film-grid">
+      {films.map((film) => (
+        <a class="film-card" href={`/watch/${film.id}`}>
+          <div class="chips"><Chip vector={film.data.vector} /></div>
+          <h3>{film.data.title}</h3>
+          <p>{film.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Papers</h2>
+      <a href="/papers">All papers</a>
+    </div>
+    <div class="cards">
+      {papers.map((paper) => (
+        <a class="card" href={paperHref(paper.id)}>
+          <div class="chips">
+            <Chip vector={paper.data.vector} />
+            <span class="meta">{paper.data.minutes} min</span>
+          </div>
+          <h3>{paper.data.title}</h3>
+          <p>{paper.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Signals</h2>
+      <a href="/signals">All signals</a>
+    </div>
+    <div class="wire">
+      {signals.map((signal) => (
+        <a class="signal" href={`/signals/${signal.id}`}>
+          <p class="meta">{formatDate(signal.data.date)}</p>
+          <div>
+            <h3>{signal.data.title}</h3>
+            <p>{signal.data.outlet}</p>
+          </div>
+          <Chip vector={signal.data.vector} />
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

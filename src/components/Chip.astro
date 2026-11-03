@@ -1,0 +1,11 @@
+---
+import { topicLabel, vectorLabel } from '../lib/site';
+interface Props {
+  vector?: 'acheron' | 'lyra' | 'both';
+  topic?: 'energy' | 'biology' | 'governance' | 'compute' | 'labor';
+}
+const { vector, topic } = Astro.props;
+const kind = vector ?? 'both';
+const label = vector ? vectorLabel[vector] : topic ? topicLabel[topic] : '';
+---
+<span class:list={['chip', vector && kind]}>{label}</span>

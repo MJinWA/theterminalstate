@@ -1,0 +1,37 @@
+---
+const path = Astro.url.pathname;
+const links = [
+  ['/terminal-state', 'The state'],
+  ['/papers', 'Papers'],
+  ['/watch', 'Watch'],
+  ['/signals', 'Signals'],
+  ['/about', 'About'],
+];
+function current(href: string) {
+  if (href === '/papers') return path.startsWith('/papers');
+  if (href === '/watch') return path.startsWith('/watch');
+  if (href === '/signals') return path.startsWith('/signals');
+  return path === href;
+}
+---
+<header class="site-header">
+  <a class="wordmark" href="/">
+    <strong>The Terminal State</strong>
+    <span>Reading room</span>
+  </a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+  <nav id="site-nav" class="nav">
+    {links.map(([href, label]) => (
+      <a href={href} aria-current={current(href) ? 'page' : undefined}>{label}</a>
+    ))}
+  </nav>
+</header>
+<script>
+  const button = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('#site-nav');
+  button?.addEventListener('click', () => {
+    const open = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', String(!open));
+    nav?.classList.toggle('is-open', !open);
+  });
+</script>

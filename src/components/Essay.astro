@@ -1,0 +1,21 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { formatDate, vectorLabel } from '../lib/site';
+import Chip from './Chip.astro';
+
+interface Props {
+  entry: CollectionEntry<'papers'>;
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+<article class="essay">
+  <p class="kicker">{vectorLabel[entry.data.vector]} · {entry.data.minutes} min</p>
+  <h1>{entry.data.title}</h1>
+  <p class="deck">{entry.data.description}</p>
+  <p class="meta"><Chip vector={entry.data.vector} /> <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time></p>
+  <slot />
+  <div class="prose">
+    <Content />
+  </div>
+</article>

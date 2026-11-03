@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Chip from '../../components/Chip.astro';
+import { byDate, formatDate } from '../../lib/site';
+
+const films = byDate(await getCollection('films'));
+const description = 'Films from the social accounts, with the transcript beside the picture.';
+---
+<Base title="Watch" description={description} path="/watch">
+  <header class="page-head">
+    <div>
+      <p class="kicker">Films</p>
+      <h1>Watch</h1>
+    </div>
+    <p class="deck">The picture stays on the platform that published it. The transcript stays here.</p>
+  </header>
+  <div class="film-grid">
+    {films.map((film) => (
+      <a class="film-card" href={`/watch/${film.id}`}>
+        <div class="chips">
+          <Chip vector={film.data.vector} />
+          <span class="meta">{formatDate(film.data.date)}</span>
+        </div>
+        <h3>{film.data.title}</h3>
+        <p>{film.data.description}</p>
+      </a>
+    ))}
+  </div>
+</Base>
